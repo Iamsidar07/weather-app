@@ -4,16 +4,7 @@ import Search from "../components/Search";
 import WeatherCard from "./WeatherCard";
 
 const Weather = () => {
-  const [weatherData, setWeatherData] = useState({
-    name: "",
-    visibility: "",
-    pressure: "",
-    humidity: "",
-    temp: "",
-    main: "",
-    windSpeed: "",
-    code: "",
-  });
+  const [data,setData]=useState();
 
   const [keywords, setKeywords] = useState("Delhi");
 
@@ -31,53 +22,28 @@ const Weather = () => {
       options
     )
     .then((response) => response.json())
-    .then((response) => setWeatherData(()=>{
-      console.log(response)
-      if (response.cod=='404') {
-        return {
-          name: "⚠️ Not Found",
-          visibility: "",
-          pressure: "",
-          humidity: "",
-          temp: "",
-          main: "",
-          windSpeed: "",
-          code: "",
-        }
-      }else{
-        return {
-      name: response.name,
-      visibility:response.visibility,
-      pressure: response.main.pressure,
-      humidity: response.main.humidity,
-      temp: response.main.temp,
-      main: response.weather[0].main,
-      windSpeed: response.wind.speed,
-      code: response.cod,
-        }
-      }
-    }))
+    .then((response)=>setData(response))
     .catch((err) => console.error(err));
-      
+     console.log({data})
   };
 
   const getWeather = (e) => {
     e.preventDefault();
     getData();
     // console.log(weatherData.main)
-    getRandomImage(weatherData.main);
+    getRandomImage(keywords);
   };
 
   useEffect(() => {
     getData();
-    getRandomImage(weatherData.main);
   }, []);
 
   const [imageURL, SetImageURL] = useState("https://source.unsplash.com/random/?delhi");
-  const getRandomImage =async (mausam) => {
-    console.log(mausam)
-    const response= await fetch(`https://source.unsplash.com/random/?${mausam}`);
+  const getRandomImage =async (keyword) => {
+  
+    const response= await fetch(`https://source.unsplash.com/random/?${keyword}`);
     SetImageURL(response.url);
+    console.log(response,keyword)
   };
 
   //`https://source.unsplash.com/random/?${mausam}`
@@ -103,7 +69,7 @@ const Weather = () => {
         keywords={keywords}
         setKeywords={setKeywords}
       />
-      <WeatherCard data={weatherData} />
+      <WeatherCard data={data} />
     </div>
   );
 };
